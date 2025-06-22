@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flower Fragrances</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f9f9f9; }
+    header { background-color: #c2185b; color: white; text-align: center; padding: 1rem; }
+    .container { display: flex; flex-wrap: wrap; padding: 20px; }
+    .sidebar { flex: 1 1 220px; background: white; padding: 20px; margin-right: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .products { flex: 3 1 600px; }
+    .sort-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+    .product-card { background: white; border-radius: 8px; padding: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+    .product-card img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; }
+    .product-card h3 { font-size: 16px; margin: 8px 0 4px; }
+    .product-card p { font-size: 13px; color: #666; }
+    .price { font-weight: bold; color: #c2185b; margin: 5px 0; }
+    .rating { color: #ff9800; margin-bottom: 6px; }
+    .btn { background-color: #c2185b; color: white; padding: 8px; border: none; border-radius: 6px; cursor: pointer; width: 100%; }
+    .btn:hover { background-color: #ad1457; }
+    @media (max-width: 768px) {
+      .container { flex-direction: column; }
+      .sidebar { margin-right: 0; margin-bottom: 20px; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Flower Fragrances</h1>
+</header>
+
+<div class="container">
+  <div class="sidebar">
+    <h3>Filter By</h3>
+    <strong>Brand</strong><br/>
+    <label><input type="checkbox" class="brand" value="Fiama"> Fiama</label><br/>
+    <label><input type="checkbox" class="brand" value="Engage"> Engage</label><br/>
+    <label><input type="checkbox" class="brand" value="Yardley"> Yardley</label><br/>
+    <label><input type="checkbox" class="brand" value="The Body Shop"> The Body Shop</label><br/><br/>
+
+    <strong>Price</strong><br/>
+    <label><input type="checkbox" class="price-range" value="1"> ₹150 - ₹300</label><br/>
+    <label><input type="checkbox" class="price-range" value="2"> ₹301 - ₹500</label><br/>
+    <label><input type="checkbox" class="price-range" value="3"> ₹501 - ₹800</label><br/><br/>
+
+    <button onclick="applyFilters()" class="btn">Apply Filters</button>
+  </div>
+
+  <div class="products">
+    <div class="sort-bar">
+      <h2>Fragrance Collection</h2>
+      <select id="sortBy" onchange="applyFilters()">
+        <option value="">Sort by</option>
+        <option value="asc">Price: Low to High</option>
+        <option value="desc">Price: High to Low</option>
+      </select>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+  </div>
+</div>
+
+<script>
+const products = [
+  { brand: "Fiama", name: "Fiama Flower Mist", desc: "Rose & Peony blend", price: 289, rating: 4.3, img: "./assets/images/products/flower1.jpg" },
+  { brand: "Engage", name: "Engage Floral Bliss", desc: "Lily & Jasmine", price: 319, rating: 4.1, img: "./assets/images/products/flower2.jpg" },
+  { brand: "Yardley", name: "Yardley English Rose", desc: "Classic floral elegance", price: 350, rating: 4.5, img: "./assets/images/products/flower3.jpg" },
+  { brand: "The Body Shop", name: "White Musk Flora", desc: "Rose & Musk", price: 799, rating: 4.7, img: "./assets/images/products/flower4.jpg" },
+  { brand: "Fiama", name: "Fiama Lily Love", desc: "Blooming fresh fragrance", price: 275, rating: 4.2, img: "./assets/images/products/flower5.jpg" },
+  { brand: "Engage", name: "Engage Gardenia Romance", desc: "Fresh garden scent", price: 310, rating: 4.0, img: "./assets/images/products/flower6.jpg" },
+  { brand: "Yardley", name: "Yardley Jasmine Mist", desc: "Pure floral feel", price: 430, rating: 4.4, img: "./assets/images/products/flower7.jpg" },
+  { brand: "The Body Shop", name: "Strawberry Bloom", desc: "Fruity floral delight", price: 699, rating: 4.6, img: "./assets/images/products/flower8.jpg" },
+  { brand: "Fiama", name: "Fiama Blossom Touch", desc: "Cherry blossom aroma", price: 295, rating: 4.3, img: "./assets/images/products/flower9.jpg" },
+  { brand: "Yardley", name: "Yardley Morning Rose", desc: "Delicate and fresh", price: 385, rating: 4.2, img: "./assets/images/products/flower10.jpg" }
+];
+
+function applyFilters() {
+  const selectedBrands = Array.from(document.querySelectorAll('.brand:checked')).map(cb => cb.value);
+  const selectedPrices = Array.from(document.querySelectorAll('.price-range:checked')).map(cb => cb.value);
+  const sortBy = document.getElementById('sortBy').value;
+
+  let filtered = products.filter(p => {
+    const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(p.brand);
+    const priceMatch = selectedPrices.length === 0 || selectedPrices.some(range => {
+      if (range === '1') return p.price >= 150 && p.price <= 300;
+      if (range === '2') return p.price > 300 && p.price <= 500;
+      if (range === '3') return p.price > 500 && p.price <= 800;
+    });
+    return brandMatch && priceMatch;
+  });
+
+  if (sortBy === 'asc') filtered.sort((a, b) => a.price - b.price);
+  if (sortBy === 'desc') filtered.sort((a, b) => b.price - a.price);
+
+  renderProducts(filtered);
+}
+
+function renderProducts(items) {
+  const grid = document.getElementById('productGrid');
+  grid.innerHTML = '';
+  if (items.length === 0) {
+    grid.innerHTML = '<p>No matching products found.</p>';
+    return;
+  }
+  items.forEach(p => {
+    const stars = '★'.repeat(Math.floor(p.rating)) + (p.rating % 1 >= 0.5 ? '½' : '');
+    grid.innerHTML += `
+      <div class="product-card">
+        <img src="${p.img}" alt="${p.name}">
+        <h3>${p.name}</h3>
+        <p>${p.desc}</p>
+        <div class="price">₹${p.price}</div>
+        <div class="rating">${stars} (${p.rating})</div>
+        <button class="btn">Add to Cart</button>
+      </div>
+    `;
+  });
+}
+
+renderProducts(products);
+</script>
+</body>
+</html>

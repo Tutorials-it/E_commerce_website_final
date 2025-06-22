@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Glasses & Lens - GSS eCommerce</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+    }
+    header {
+      background-color: #7000aa;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 20px;
+    }
+    .sidebar {
+      flex: 1 1 200px;
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      max-width: 300px;
+    }
+    .product-area {
+      flex: 3 1 600px;
+      padding: 0 20px;
+    }
+    .filter-title {
+      font-weight: bold;
+      margin: 15px 0 5px;
+    }
+    .filter-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .sort-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .product-card {
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .product-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: contain;
+    }
+    .product-card h3 {
+      font-size: 16px;
+      margin: 10px 0 5px;
+    }
+    .product-card p {
+      font-size: 14px;
+      color: #555;
+    }
+    .price {
+      font-weight: bold;
+      color: #7000aa;
+      margin: 10px 0;
+    }
+    .rating {
+      color: #f7c948;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .btn {
+      background-color: #7000aa;
+      color: white;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #5b0087;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      .sidebar {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Glasses & Lens Collection</h1>
+</header>
+
+<div class="container">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="filter-group">
+      <div class="filter-title">Category</div>
+      <label><input type="checkbox" class="category" value="Glasses"> Glasses</label>
+      <label><input type="checkbox" class="category" value="Lens"> Lens</label>
+    </div>
+    <div class="filter-group">
+      <div class="filter-title">Brand</div>
+      <label><input type="checkbox" class="brand" value="Ray-Ban"> Ray-Ban</label>
+      <label><input type="checkbox" class="brand" value="Titan"> Titan</label>
+      <label><input type="checkbox" class="brand" value="Bausch+Lomb"> Bausch+Lomb</label>
+      <label><input type="checkbox" class="brand" value="FreshLook"> FreshLook</label>
+    </div>
+    <div class="filter-group">
+      <div class="filter-title">Price</div>
+      <label><input type="checkbox" class="price-range" value="1"> ₹500 - ₹1,000</label>
+      <label><input type="checkbox" class="price-range" value="2"> ₹1,001 - ₹2,000</label>
+      <label><input type="checkbox" class="price-range" value="3"> ₹2,001 - ₹5,000</label>
+    </div>
+    <button onclick="applyFilters()" class="btn">Apply Filters</button>
+  </div>
+
+  <!-- Product Area -->
+  <div class="product-area">
+    <div class="sort-bar">
+      <h2>All Products</h2>
+      <select id="sortBy" onchange="applyFilters()">
+        <option value="">Sort By</option>
+        <option value="asc">Price: Low to High</option>
+        <option value="desc">Price: High to Low</option>
+      </select>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+  </div>
+</div>
+
+<script>
+const products = [
+  { category: 'Glasses', brand: 'Ray-Ban', name: 'Ray-Ban Aviator', desc: 'Classic metal frame', price: 2999, rating: 4.5, img: 'https://via.placeholder.com/200?text=Aviator' },
+  { category: 'Glasses', brand: 'Titan', name: 'Titan Rectangle Glass', desc: 'Stylish black frame', price: 1499, rating: 4, img: 'https://via.placeholder.com/200?text=Titan' },
+  { category: 'Glasses', brand: 'Ray-Ban', name: 'Ray-Ban Wayfarer', desc: 'Timeless style', price: 3499, rating: 5, img: 'https://via.placeholder.com/200?text=Wayfarer' },
+  { category: 'Glasses', brand: 'Titan', name: 'Titan Square Frame', desc: 'Durable design', price: 1199, rating: 3.5, img: 'https://via.placeholder.com/200?text=Square' },
+  { category: 'Glasses', brand: 'Ray-Ban', name: 'Ray-Ban Clubmaster', desc: 'Bold and trendy', price: 2399, rating: 4.5, img: 'https://via.placeholder.com/200?text=Clubmaster' },
+  { category: 'Glasses', brand: 'Titan', name: 'Titan Slim Frame', desc: 'Elegant and light', price: 999, rating: 4.2, img: 'https://via.placeholder.com/200?text=Slim' },
+  { category: 'Glasses', brand: 'Ray-Ban', name: 'Ray-Ban Hexagonal', desc: 'Modern touch', price: 3999, rating: 4.7, img: 'https://via.placeholder.com/200?text=Hex' },
+  { category: 'Glasses', brand: 'Titan', name: 'Titan Sport Frame', desc: 'For active wearers', price: 1999, rating: 4.1, img: 'https://via.placeholder.com/200?text=Sport' },
+  { category: 'Glasses', brand: 'Ray-Ban', name: 'Ray-Ban Oval', desc: 'Unique and bold', price: 1899, rating: 3.8, img: 'https://via.placeholder.com/200?text=Oval' },
+  { category: 'Glasses', brand: 'Titan', name: 'Titan Minimal Frame', desc: 'Less is more', price: 899, rating: 3.9, img: 'https://via.placeholder.com/200?text=Minimal' },
+
+  { category: 'Lens', brand: 'Bausch+Lomb', name: 'B&L Daily Wear', desc: 'Comfortable daily lenses', price: 999, rating: 4.5, img: 'https://via.placeholder.com/200?text=B+L+Daily' },
+  { category: 'Lens', brand: 'FreshLook', name: 'FreshLook Color', desc: 'Color contact lenses', price: 1199, rating: 4, img: 'https://via.placeholder.com/200?text=FreshLook' },
+  { category: 'Lens', brand: 'Bausch+Lomb', name: 'B&L Monthly Pack', desc: 'Pack of 6 lenses', price: 1599, rating: 4.7, img: 'https://via.placeholder.com/200?text=Monthly' },
+  { category: 'Lens', brand: 'FreshLook', name: 'FreshLook Green', desc: 'Vibrant green tint', price: 1099, rating: 3.8, img: 'https://via.placeholder.com/200?text=Green' },
+  { category: 'Lens', brand: 'Bausch+Lomb', name: 'B&L Toric', desc: 'For astigmatism', price: 1999, rating: 4.3, img: 'https://via.placeholder.com/200?text=Toric' },
+  { category: 'Lens', brand: 'FreshLook', name: 'FreshLook Blue', desc: 'Ocean blue eyes', price: 1399, rating: 4.4, img: 'https://via.placeholder.com/200?text=Blue' },
+  { category: 'Lens', brand: 'Bausch+Lomb', name: 'B&L Soft Lens', desc: 'High moisture', price: 899, rating: 4.1, img: 'https://via.placeholder.com/200?text=Soft' },
+  { category: 'Lens', brand: 'FreshLook', name: 'FreshLook Hazel', desc: 'Warm hazel eyes', price: 1299, rating: 3.9, img: 'https://via.placeholder.com/200?text=Hazel' },
+  { category: 'Lens', brand: 'Bausch+Lomb', name: 'B&L Bi-weekly', desc: 'Lasts 15 days', price: 1499, rating: 4.6, img: 'https://via.placeholder.com/200?text=Biweekly' },
+  { category: 'Lens', brand: 'FreshLook', name: 'FreshLook Violet', desc: 'Unique color style', price: 1599, rating: 4.2, img: 'https://via.placeholder.com/200?text=Violet' },
+];
+
+function applyFilters() {
+  const selectedCategories = Array.from(document.querySelectorAll('.category:checked')).map(c => c.value);
+  const selectedBrands = Array.from(document.querySelectorAll('.brand:checked')).map(b => b.value);
+  const selectedPrices = Array.from(document.querySelectorAll('.price-range:checked')).map(p => p.value);
+  const sortBy = document.getElementById('sortBy').value;
+
+  let filtered = products.filter(p => {
+    const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(p.category);
+    const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(p.brand);
+    const priceMatch = selectedPrices.length === 0 || selectedPrices.some(pr => {
+      if (pr === '1') return p.price >= 500 && p.price <= 1000;
+      if (pr === '2') return p.price > 1000 && p.price <= 2000;
+      if (pr === '3') return p.price > 2000 && p.price <= 5000;
+    });
+    return categoryMatch && brandMatch && priceMatch;
+  });
+
+  if (sortBy === 'asc') filtered.sort((a, b) => a.price - b.price);
+  if (sortBy === 'desc') filtered.sort((a, b) => b.price - a.price);
+
+  renderProducts(filtered);
+}
+
+function renderProducts(products) {
+  const grid = document.getElementById('productGrid');
+  grid.innerHTML = '';
+  if (products.length === 0) {
+    grid.innerHTML = '<p>No products found.</p>';
+    return;
+  }
+  products.forEach(p => {
+    const stars = '★'.repeat(Math.floor(p.rating)) + (p.rating % 1 >= 0.5 ? '½' : '');
+    grid.innerHTML += `
+      <div class="product-card">
+        <img src="${p.img}" alt="${p.name}">
+        <h3>${p.name}</h3>
+        <p>${p.desc}</p>
+        <div class="rating">${stars} (${p.rating})</div>
+        <div class="price">₹${p.price.toLocaleString()}</div>
+        <button class="btn">Add to Cart</button>
+      </div>
+    `;
+  });
+}
+
+// Initial render
+renderProducts(products);
+</script>
+
+</body>
+</html>

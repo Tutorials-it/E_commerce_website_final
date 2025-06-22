@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Deodorants</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; }
+    header { background-color: #00695c; color: white; text-align: center; padding: 1rem; }
+    .container { display: flex; flex-wrap: wrap; padding: 20px; }
+    .sidebar { flex: 1 1 220px; background: white; padding: 20px; margin-right: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .products { flex: 3 1 600px; }
+    .sort-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+    .product-card { background: white; border-radius: 8px; padding: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+    .product-card img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; }
+    .product-card h3 { font-size: 16px; margin: 8px 0 4px; }
+    .product-card p { font-size: 13px; color: #666; }
+    .price { font-weight: bold; color: #00695c; margin: 5px 0; }
+    .rating { color: #ff9800; margin-bottom: 6px; }
+    .btn { background-color: #00695c; color: white; padding: 8px; border: none; border-radius: 6px; cursor: pointer; width: 100%; }
+    .btn:hover { background-color: #004d40; }
+    @media (max-width: 768px) {
+      .container { flex-direction: column; }
+      .sidebar { margin-right: 0; margin-bottom: 20px; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Deodorants</h1>
+</header>
+
+<div class="container">
+  <div class="sidebar">
+    <h3>Filter By</h3>
+    <strong>Brand</strong><br/>
+    <label><input type="checkbox" class="brand" value="Axe"> Axe</label><br/>
+    <label><input type="checkbox" class="brand" value="Fogg"> Fogg</label><br/>
+    <label><input type="checkbox" class="brand" value="Nivea"> Nivea</label><br/>
+    <label><input type="checkbox" class="brand" value="Wild Stone"> Wild Stone</label><br/><br/>
+
+    <strong>Price</strong><br/>
+    <label><input type="checkbox" class="price-range" value="1"> ₹100 - ₹200</label><br/>
+    <label><input type="checkbox" class="price-range" value="2"> ₹201 - ₹400</label><br/>
+    <label><input type="checkbox" class="price-range" value="3"> ₹401 - ₹700</label><br/><br/>
+
+    <button onclick="applyFilters()" class="btn">Apply Filters</button>
+  </div>
+
+  <div class="products">
+    <div class="sort-bar">
+      <h2>Deodorant Collection</h2>
+      <select id="sortBy" onchange="applyFilters()">
+        <option value="">Sort by</option>
+        <option value="asc">Price: Low to High</option>
+        <option value="desc">Price: High to Low</option>
+      </select>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+  </div>
+</div>
+
+<script>
+const products = [
+  { brand: "Axe", name: "Axe Dark Temptation", desc: "Sweet chocolate fragrance", price: 199, rating: 4.2, img: "./assets/images/products/deo1.jpg" },
+  { brand: "Fogg", name: "Fogg Marco", desc: "Long-lasting scent", price: 279, rating: 4.5, img: "./assets/images/products/deo2.jpg" },
+  { brand: "Nivea", name: "Nivea Fresh Active", desc: "Cool and fresh", price: 225, rating: 4.3, img: "./assets/images/products/deo3.jpg" },
+  { brand: "Wild Stone", name: "Wild Stone Code Steel", desc: "Bold and spicy", price: 275, rating: 4.4, img: "./assets/images/products/deo4.jpg" },
+  { brand: "Fogg", name: "Fogg Xtremo", desc: "Intense masculine spray", price: 299, rating: 4.1, img: "./assets/images/products/deo5.jpg" },
+  { brand: "Axe", name: "Axe Gold Temptation", desc: "Modern and attractive", price: 189, rating: 4.0, img: "./assets/images/products/deo6.jpg" },
+  { brand: "Nivea", name: "Nivea Men Silver Protect", desc: "Odour control", price: 259, rating: 4.6, img: "./assets/images/products/deo7.jpg" },
+  { brand: "Wild Stone", name: "Wild Stone Hydra Energy", desc: "Fresh and long-lasting", price: 349, rating: 4.3, img: "./assets/images/products/deo8.jpg" },
+  { brand: "Fogg", name: "Fogg Napoleon", desc: "Premium fragrance", price: 325, rating: 4.2, img: "./assets/images/products/deo9.jpg" },
+  { brand: "Axe", name: "Axe Signature Mysterious", desc: "Luxury body perfume", price: 299, rating: 4.4, img: "./assets/images/products/deo10.jpg" }
+];
+
+function applyFilters() {
+  const selectedBrands = Array.from(document.querySelectorAll('.brand:checked')).map(cb => cb.value);
+  const selectedPrices = Array.from(document.querySelectorAll('.price-range:checked')).map(cb => cb.value);
+  const sortBy = document.getElementById('sortBy').value;
+
+  let filtered = products.filter(p => {
+    const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(p.brand);
+    const priceMatch = selectedPrices.length === 0 || selectedPrices.some(range => {
+      if (range === '1') return p.price >= 100 && p.price <= 200;
+      if (range === '2') return p.price > 200 && p.price <= 400;
+      if (range === '3') return p.price > 400 && p.price <= 700;
+    });
+    return brandMatch && priceMatch;
+  });
+
+  if (sortBy === 'asc') filtered.sort((a, b) => a.price - b.price);
+  if (sortBy === 'desc') filtered.sort((a, b) => b.price - a.price);
+
+  renderProducts(filtered);
+}
+
+function renderProducts(items) {
+  const grid = document.getElementById('productGrid');
+  grid.innerHTML = '';
+  if (items.length === 0) {
+    grid.innerHTML = '<p>No matching products found.</p>';
+    return;
+  }
+  items.forEach(p => {
+    const stars = '★'.repeat(Math.floor(p.rating)) + (p.rating % 1 >= 0.5 ? '½' : '');
+    grid.innerHTML += `
+      <div class="product-card">
+        <img src="${p.img}" alt="${p.name}">
+        <h3>${p.name}</h3>
+        <p>${p.desc}</p>
+        <div class="price">₹${p.price}</div>
+        <div class="rating">${stars} (${p.rating})</div>
+        <button class="btn">Add to Cart</button>
+      </div>
+    `;
+  });
+}
+
+renderProducts(products);
+</script>
+</body>
+</html>

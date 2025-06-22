@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bracelets</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f8f9fa; }
+    header { background-color: #d81b60; color: white; text-align: center; padding: 1rem; }
+    .container { display: flex; flex-wrap: wrap; padding: 20px; }
+    .sidebar { flex: 1 1 250px; background: #fff; padding: 20px; margin-right: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .products { flex: 3 1 600px; }
+    .sort-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+    .product-card { background: white; border-radius: 10px; padding: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+    .product-card img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; }
+    .product-card h3 { font-size: 16px; margin: 8px 0 4px; }
+    .product-card p { font-size: 13px; color: #666; }
+    .price { font-weight: bold; color: #d81b60; margin: 5px 0; }
+    .rating { color: #ff9800; margin-bottom: 6px; }
+    .btn { background-color: #d81b60; color: white; padding: 8px; border: none; border-radius: 6px; cursor: pointer; width: 100%; }
+    .btn:hover { background-color: #ad1457; }
+    @media (max-width: 768px) {
+      .container { flex-direction: column; }
+      .sidebar { margin-right: 0; margin-bottom: 20px; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Bracelets</h1>
+</header>
+
+<div class="container">
+  <div class="sidebar">
+    <h3>Filter By</h3>
+    <strong>Brand</strong><br/>
+    <label><input type="checkbox" class="brand" value="Voylla"> Voylla</label><br/>
+    <label><input type="checkbox" class="brand" value="Giva"> Giva</label><br/>
+    <label><input type="checkbox" class="brand" value="Caratlane"> Caratlane</label><br/>
+    <label><input type="checkbox" class="brand" value="Tribe Amrapali"> Tribe Amrapali</label><br/><br/>
+
+    <strong>Price</strong><br/>
+    <label><input type="checkbox" class="price-range" value="1"> ₹500 - ₹1,000</label><br/>
+    <label><input type="checkbox" class="price-range" value="2"> ₹1,001 - ₹2,500</label><br/>
+    <label><input type="checkbox" class="price-range" value="3"> ₹2,501 - ₹5,000</label><br/><br/>
+
+    <button onclick="applyFilters()" class="btn">Apply Filters</button>
+  </div>
+
+  <div class="products">
+    <div class="sort-bar">
+      <h2>Bracelet Collection</h2>
+      <select id="sortBy" onchange="applyFilters()">
+        <option value="">Sort by</option>
+        <option value="asc">Price: Low to High</option>
+        <option value="desc">Price: High to Low</option>
+      </select>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+  </div>
+</div>
+
+<script>
+const products = [
+  { brand: "Voylla", name: "Pearl Charm Bracelet", desc: "Elegant & lightweight", price: 799, rating: 4.4, img: "./assets/images/products/bracelet1.jpg" },
+  { brand: "Giva", name: "Sterling Silver Bracelet", desc: "925 Silver Premium", price: 2499, rating: 4.7, img: "./assets/images/products/bracelet2.jpg" },
+  { brand: "Caratlane", name: "Rose Gold Bracelet", desc: "Stylish everyday wear", price: 4599, rating: 4.8, img: "./assets/images/products/bracelet3.jpg" },
+  { brand: "Tribe Amrapali", name: "Traditional Kundan", desc: "Ethnic heavy design", price: 3299, rating: 4.6, img: "./assets/images/products/bracelet4.jpg" },
+  { brand: "Giva", name: "Infinity Charm Bracelet", desc: "Symbolic design", price: 1799, rating: 4.3, img: "./assets/images/products/bracelet5.jpg" },
+  { brand: "Voylla", name: "Simple Gold Plated", desc: "Affordable & classic", price: 999, rating: 4.2, img: "./assets/images/products/bracelet6.jpg" },
+  { brand: "Caratlane", name: "Diamond Studded", desc: "Luxury piece", price: 4999, rating: 4.9, img: "./assets/images/products/bracelet7.jpg" },
+  { brand: "Tribe Amrapali", name: "Antique Bangle Bracelet", desc: "Royal touch", price: 2899, rating: 4.5, img: "./assets/images/products/bracelet8.jpg" },
+  { brand: "Voylla", name: "Beaded Charm Set", desc: "Colorful party wear", price: 899, rating: 4.1, img: "./assets/images/products/bracelet9.jpg" },
+  { brand: "Giva", name: "Minimalist Chain", desc: "Trendy and sleek", price: 1999, rating: 4.4, img: "./assets/images/products/bracelet10.jpg" }
+];
+
+function applyFilters() {
+  const selectedBrands = Array.from(document.querySelectorAll('.brand:checked')).map(cb => cb.value);
+  const selectedPrices = Array.from(document.querySelectorAll('.price-range:checked')).map(cb => cb.value);
+  const sortBy = document.getElementById('sortBy').value;
+
+  let filtered = products.filter(p => {
+    const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(p.brand);
+    const priceMatch = selectedPrices.length === 0 || selectedPrices.some(range => {
+      if (range === '1') return p.price >= 500 && p.price <= 1000;
+      if (range === '2') return p.price > 1000 && p.price <= 2500;
+      if (range === '3') return p.price > 2500 && p.price <= 5000;
+    });
+    return brandMatch && priceMatch;
+  });
+
+  if (sortBy === 'asc') filtered.sort((a, b) => a.price - b.price);
+  if (sortBy === 'desc') filtered.sort((a, b) => b.price - a.price);
+
+  renderProducts(filtered);
+}
+
+function renderProducts(items) {
+  const grid = document.getElementById('productGrid');
+  grid.innerHTML = '';
+  if (items.length === 0) {
+    grid.innerHTML = '<p>No matching products found.</p>';
+    return;
+  }
+  items.forEach(p => {
+    const stars = '★'.repeat(Math.floor(p.rating)) + (p.rating % 1 >= 0.5 ? '½' : '');
+    grid.innerHTML += `
+      <div class="product-card">
+        <img src="${p.img}" alt="${p.name}">
+        <h3>${p.name}</h3>
+        <p>${p.desc}</p>
+        <div class="price">₹${p.price}</div>
+        <div class="rating">${stars} (${p.rating})</div>
+        <button class="btn">Add to Cart</button>
+      </div>
+    `;
+  });
+}
+
+renderProducts(products);
+</script>
+</body>
+</html>
